@@ -12,7 +12,7 @@ import net.corda.core.utilities.ProgressTracker;
 
 @InitiatingFlow
 @StartableByRPC
-public class SSFlow extends FlowLogic<Void> {
+public class SSFlow extends FlowLogic<SignedTransaction> {
     private final String exchangeType;
     private final String messageType;
     private final Party otherParty;
@@ -38,7 +38,7 @@ public class SSFlow extends FlowLogic<Void> {
      */
     @Suspendable
     @Override
-    public Void call() throws FlowException {
+    public SignedTransaction call() throws FlowException {
         // We retrieve the notary identity from the network map.
         Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
 
@@ -60,6 +60,6 @@ public class SSFlow extends FlowLogic<Void> {
         // We finalise the transaction and then send it to the counterparty.
         subFlow(new FinalityFlow(signedTx, otherPartySession));
 
-        return null;
+        return signedTx;
     }
 }
