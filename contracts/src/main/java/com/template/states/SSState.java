@@ -11,34 +11,38 @@ import java.util.List;
 
 @BelongsToContract(TemplateContract.class)
 public class SSState implements ContractState {
+    private final String sourceTxId;
+    private final String sourceBlockchain;
+    private final String sourceContract;
     private final String exchangeType;
     private final String messageType;
-    private final Party sender;
     private final Party receiver;
 
-    public SSState(String exchangeType, String messageType, Party sender, Party receiver) {
+    public SSState(
+        String sourceTxId,
+        String sourceBlockchain,
+        String sourceContract,
+        String exchangeType,
+        String messageType,
+        Party receiver
+    ) {
+        this.sourceTxId = sourceTxId;
+        this.sourceBlockchain = sourceBlockchain;
+        this.sourceContract = sourceContract;
         this.exchangeType = exchangeType;
         this.messageType = messageType;
-        this.sender = sender;
         this.receiver = receiver;
     }
 
-    public String getExchangeType() {
-        return exchangeType;
-    }
-
+    public String getSourceTxId() { return sourceTxId; }
+    public String getSourceBlockchain() { return sourceBlockchain; }
+    public String getSourceContract() { return sourceContract; }
+    public String getExchangeType() { return exchangeType; }
     public String getMessageType() { return messageType; }
-
-    public Party getSender() {
-        return sender;
-    }
-
-    public Party getReceiver() {
-        return receiver;
-    }
+    public Party getReceiver() { return receiver; }
 
     @Override
     public List<AbstractParty> getParticipants() {
-        return Arrays.asList(sender, receiver);
+        return Arrays.asList(receiver);
     }
 }

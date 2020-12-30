@@ -1,21 +1,18 @@
 package com.template.flows;
 
+import co.paralleluniverse.fibers.Suspendable;
 import com.template.contracts.TemplateContract;
 import com.template.states.SSState;
-import co.paralleluniverse.fibers.Suspendable;
-import net.corda.core.flows.*;
 import net.corda.core.contracts.Command;
+import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.core.utilities.ProgressTracker;
 
-import java.util.Collections;
-import java.util.List;
-
 @InitiatingFlow
 @StartableByRPC
-public class SSFlow extends FlowLogic<SignedTransaction> {
+public class CreateRemoteSSTxFlow extends FlowLogic<SignedTransaction> {
     private final String sourceTxId;
     private final String sourceBlockchain;
     private final String sourceContract;
@@ -28,7 +25,7 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
      */
     private final ProgressTracker progressTracker = new ProgressTracker();
 
-    public SSFlow(
+    public CreateRemoteSSTxFlow(
         String sourceTxId,
         String sourceBlockchain,
         String sourceContract,
@@ -60,12 +57,12 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
 
         // We create the transaction components.
         SSState outputState = new SSState(
-            sourceTxId,
-            sourceBlockchain,
-            sourceContract,
-            exchangeType,
-            messageType,
-            getOurIdentity()
+                sourceTxId,
+                sourceBlockchain,
+                sourceContract,
+                exchangeType,
+                messageType,
+                getOurIdentity()
         );
         Command command = new Command<>(new TemplateContract.Commands.Send(), getOurIdentity().getOwningKey());
 
@@ -77,11 +74,11 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
         // Signing the transaction.
         SignedTransaction signedTx = getServiceHub().signInitialTransaction(txBuilder);
 
-        // Since there is no counter party we pass an empty list
-        List<FlowSession> sessions = Collections.EMPTY_LIST;
+        // Creating a session with the other party.
+        FlowSession otherPartySession = initiateFlow(otherParty);
 
         // We finalise the transaction and then send it to the counterparty.
-        subFlow(new FinalityFlow(signedTx, sessions));
+        subFlow(new FinalityFlow(signedTx, otherPartySession));
 
         return signedTx;
     }
