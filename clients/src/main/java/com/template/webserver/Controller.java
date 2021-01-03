@@ -41,14 +41,7 @@ public class Controller {
 
     @PostMapping(value = "/transactions", produces = TEXT_PLAIN_VALUE, headers = "Content-Type=application/x-www-form-urlencoded")
     private ResponseEntity<String> recordExchange(HttpServletRequest request) throws IllegalArgumentException {
-        String sourceTxId = request.getParameter("sourceTxId");
-        String sourceBlockchain = request.getParameter("sourceBlockchain");
-        String sourceContract = request.getParameter("sourceContract");
         String targetTx = request.getParameter("targetTx");
-        String exchangeType = request.getParameter("exchangeType");
-        String messageType = request.getParameter("messageType");
-
-        // TODO: GET ALL PARAMETERS AND PASS THEM TO THE FLOW
         Map<String, String[]> parameters = request.getParameterMap();
 
         // Create a new state using the parameters given
@@ -60,11 +53,7 @@ public class Controller {
                 SignedTransaction result =
                         proxy.startTrackedFlowDynamic(
                             flowClass,
-                            sourceTxId,
-                            sourceBlockchain,
-                            sourceContract,
-                            exchangeType,
-                            messageType,
+                            parameters,
                             gatewayParty
                         ).getReturnValue().get();
 

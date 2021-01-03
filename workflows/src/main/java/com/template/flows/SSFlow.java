@@ -12,6 +12,7 @@ import net.corda.core.utilities.ProgressTracker;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @InitiatingFlow
 @StartableByRPC
@@ -29,18 +30,14 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
     private final ProgressTracker progressTracker = new ProgressTracker();
 
     public SSFlow(
-        String sourceTxId,
-        String sourceBlockchain,
-        String sourceContract,
-        String exchangeType,
-        String messageType,
+        Map<String, String[]> parameters,
         Party otherParty
     ) {
-        this.sourceTxId = sourceTxId;
-        this.sourceBlockchain = sourceBlockchain;
-        this.sourceContract = sourceContract;
-        this.exchangeType = exchangeType;
-        this.messageType = messageType;
+        this.sourceTxId = parameters.get("sourceTxId")[0];
+        this.sourceBlockchain = parameters.get("sourceBlockchain")[0];
+        this.sourceContract = parameters.get("sourceContract")[0];
+        this.exchangeType = parameters.get("exchangeType")[0];
+        this.messageType = parameters.get("messageType")[0];
         this.otherParty = otherParty;
     }
 
