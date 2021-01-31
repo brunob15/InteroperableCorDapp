@@ -12,16 +12,11 @@ import net.corda.core.utilities.ProgressTracker;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @InitiatingFlow
 @StartableByRPC
 public class SSFlow extends FlowLogic<SignedTransaction> {
-    private final String sourceTxId;
-    private final String sourceBlockchain;
-    private final String sourceContract;
-    private final String exchangeType;
-    private final String messageType;
+    private final EventData data;
     private final Party otherParty;
 
     /**
@@ -29,15 +24,8 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
      */
     private final ProgressTracker progressTracker = new ProgressTracker();
 
-    public SSFlow(
-        Map<String, String[]> parameters,
-        Party otherParty
-    ) {
-        this.sourceTxId = parameters.get("sourceTxId")[0];
-        this.sourceBlockchain = parameters.get("sourceBlockchain")[0];
-        this.sourceContract = parameters.get("sourceContract")[0];
-        this.exchangeType = parameters.get("exchangeType")[0];
-        this.messageType = parameters.get("messageType")[0];
+    public SSFlow(EventData data, Party otherParty) {
+        this.data = data;
         this.otherParty = otherParty;
     }
 
@@ -57,11 +45,11 @@ public class SSFlow extends FlowLogic<SignedTransaction> {
 
         // We create the transaction components.
         SSState outputState = new SSState(
-            sourceTxId,
-            sourceBlockchain,
-            sourceContract,
-            exchangeType,
-            messageType,
+            data.getSourceTxId(),
+            data.getSourceBlockchain(),
+            data.getSourceContract(),
+            data.getExchangeType(),
+            data.getMessageType(),
             getOurIdentity()
         );
         Command command = new Command<>(new TemplateContract.Commands.Send(), getOurIdentity().getOwningKey());

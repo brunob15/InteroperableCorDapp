@@ -19,12 +19,12 @@ public class SSState implements ContractState {
     private final Party receiver;
 
     public SSState(
-        String sourceTxId,
-        String sourceBlockchain,
-        String sourceContract,
-        String exchangeType,
-        String messageType,
-        Party receiver
+            String sourceTxId,
+            String sourceBlockchain,
+            String sourceContract,
+            String exchangeType,
+            String messageType,
+            Party receiver
     ) {
         this.sourceTxId = sourceTxId;
         this.sourceBlockchain = sourceBlockchain;
