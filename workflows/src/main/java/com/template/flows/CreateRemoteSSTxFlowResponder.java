@@ -2,6 +2,8 @@ package com.template.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.flows.*;
+import net.corda.core.transactions.SignedTransaction;
+import org.slf4j.Logger;
 
 // ******************
 // * Responder flow *
@@ -17,7 +19,11 @@ public class CreateRemoteSSTxFlowResponder extends FlowLogic<Void> {
     @Suspendable
     @Override
     public Void call() throws FlowException {
-        subFlow(new ReceiveFinalityFlow(otherPartySession));
+//        String otherPartyName = otherPartySession.getCounterparty().getName().toString();
+//        logger.info("Receiving transaction from: " + otherPartyName);
+        getLogger().info("Receiving transaction");
+        SignedTransaction tx = subFlow(new ReceiveFinalityFlow(otherPartySession));
+        getLogger().info("Transaction signed");
         return null;
     }
 }

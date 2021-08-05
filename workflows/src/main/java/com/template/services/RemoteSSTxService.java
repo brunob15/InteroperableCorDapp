@@ -40,7 +40,6 @@ public class RemoteSSTxService extends SingletonSerializeAsToken {
             int length = body.length;
             String signature = buildSignature(body);
 
-
             http.setFixedLengthStreamingMode(length);
             http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             http.setRequestProperty("x-corda-signature", signature);
@@ -58,15 +57,23 @@ public class RemoteSSTxService extends SingletonSerializeAsToken {
         JSONObject body = new JSONObject();
         JSONObject data = new JSONObject();
 
-        body.put("targetBlockchain", "fabric");
-        body.put("targetContract", "jssmartcontract");
+        String messageType = state.getMessageType();
+        String packageHash = messageType.equals("request") ? state.getRequestPackageHash() : state.getResponsePackageHash();
 
-        data.put("sourceTxId", tx.getId().toString());
+        body.put("targetBlockchain", "fabric");
+        body.put("targetContract", "socialsecurityexchange");
         data.put("sourceBlockchain", "corda");
         data.put("sourceContract", "SocialSecurity");
-        data.put("eventType", "SocialSecurityExchange");
-        data.put("exchangeType", state.getExchangeType());
-        data.put("messageType", state.getMessageType());
+        data.put("requestID", state.getRequestID());
+        data.put("senderInstitution", state.getSenderInstitution());
+        data.put("receiverInstitution", state.getReceiverInstitution());
+        data.put("messageType", messageType);
+        data.put("requestType", state.getRequestType());
+        data.put("status", state.getStatus());
+        data.put("requestDate", state.getRequestDate());
+        data.put("responseDate", state.getResponseDate());
+        data.put("expectedReplyDate", state.getExpectedReplyDate());
+        data.put("packageHash", packageHash);
         body.put("data", data);
 
         String bodyString = body.toJSONString();
